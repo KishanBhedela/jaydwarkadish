@@ -22,7 +22,14 @@ app.use('/api/companies', require('./routes/companies'));
 app.use('/api/upload', require('./routes/upload'));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/shopdb')
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/shopdb';
+// Basic validation so deployments fail with a clear message instead of a cryptic MongoParseError
+if (!/^mongodb(\+srv)?:\/\//i.test(mongoUri)) {
+  console.error('❌ Invalid MONGODB_URI. It must start with "mongodb://" or "mongodb+srv://".\nCurrent value:', mongoUri);
+  process.exit(1);
+}
+
+mongoose.connect(mongoUri)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Error:', err));
 
