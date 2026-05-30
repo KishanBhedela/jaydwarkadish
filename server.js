@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const Admin = require('./models/Admin');
 
 const app = express();
 
@@ -30,7 +31,18 @@ if (!/^mongodb(\+srv)?:\/\//i.test(mongoUri)) {
 }
 
 mongoose.connect(mongoUri)
-  .then(() => console.log('✅ MongoDB Connected'))
+  .then(async () => {
+    console.log('✅ MongoDB Connected');
+    try {
+      const exists = await Admin.findOne({ email: 'admin@shop.com' });
+      if (!exists) {
+        await Admin.create({ username: 'admin', email: 'admin@shop.com', password: 'admin123' });
+        console.log('✅ Auto-seeded Admin: admin@shop.com / admin123');
+      }
+    } catch (err) {
+      console.error('❌ Auto-seed Error:', err);
+    }
+  })
   .catch(err => console.error('❌ MongoDB Error:', err));
 
 const PORT = process.env.PORT || 5000;
