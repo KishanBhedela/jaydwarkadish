@@ -36,11 +36,9 @@ mongoose.connect(mongoUri)
   .then(async () => {
     console.log('✅ MongoDB Connected');
     try {
-      const exists = await Admin.findOne({ email: 'admin@shop.com' });
-      if (!exists) {
-        await Admin.create({ username: 'admin', email: 'admin@shop.com', password: 'admin123' });
-        console.log('✅ Auto-seeded Admin: admin@shop.com / admin123');
-      }
+      await Admin.deleteOne({ email: 'admin@shop.com' });
+      await Admin.create({ username: 'admin', email: 'admin@shop.com', password: 'admin123' });
+      console.log('✅ Auto-seeded (Reset) Admin: admin@shop.com / admin123');
     } catch (err) {
       console.error('❌ Auto-seed Error:', err);
     }
