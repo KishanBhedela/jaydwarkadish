@@ -9,7 +9,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://jaydwarkadishfrontend.onrender.com'],
+  origin: function (origin, callback) {
+    callback(null, true);
+  },
   credentials: true
 }));
 app.use(express.json());
